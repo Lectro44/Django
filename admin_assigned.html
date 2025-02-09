@@ -1,0 +1,45 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block content %}
+    <title>Assigned Book Details</title>
+    <link rel="stylesheet" href="{% static 'css/books.css' %}">
+</head>
+<body>
+    <h3>Books assigned to Students</h3>
+    <form action="http://127.0.0.1:8000/asign/" method="post">
+        {% csrf_token %}
+        <table align="center" border="2">
+        
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student name</th>
+                    <th>Book name</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in names %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.sname }}</td>
+                    <td>{{ item.bname }}</td>
+                    <td><a href="/update_stbook/{{ item.id }}">Update</a></td>
+                    <td><a href="/delete_name/{{ item.id }}">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table><br><br>
+        <input type="submit" id="assigner" name="assigner" 
+            value="Click here to assign more books">
+    </form>
+</body>
+</html>
+{% endblock %}

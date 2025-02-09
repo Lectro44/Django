@@ -1,0 +1,24 @@
+{% extends "student_base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block content %}
+    <title>Student Home</title>
+    <link rel="stylesheet" href="{% static 'css/books.css' %}">
+</head>
+<body>
+        
+    <h3>Welcome to your Dashboard {{ student }}</h3>
+    <form action="/prof_template/{{ students.id }}" method="post">
+        {% csrf_token %}
+            <p>Click the Start button below to continue</p>
+        <input type="submit"  name="start" 
+            value="Start"> 
+    </form>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Admin Navigations</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel= "stylesheet" href = "{% static 'css/admin_flex.css' %}">
+    </head>
+    <body>
+      <nav class="navbar bg-primary" data-bs-theme="dark">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="flex">
+    <a class="navbar-brand" href="http://127.0.0.1:8000/books">Add Book</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="flex">
+    <a class="navbar-brand" href="http://127.0.0.1:8000/show_books">Display Book</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="flex" href="http://127.0.0.1:8000/admin_dash"><h3>Library management</h3></a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="flex">
+          <a class="nav-link active" aria-current="page" href="/asign">Assign Book</a>
+        </li>
+        <li class="flex">
+          <a class="nav-link active" aria-current="page" href="/show_assign">Display Assign</a>
+        </li>
+        <li class="flex">
+          <a class="nav-link" href="/log_out">Logout</a>
+        </li>
+      </ul>
+      </form>
+    </div>
+  </div>
+</nav>
+</nav>
+</body>
+</html>

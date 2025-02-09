@@ -1,0 +1,43 @@
+{% extends "student_base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block content %}
+    <title>Student borrowed books</title>
+    <link rel="stylesheet" href="{% static 'css/books.css' %}">
+</head>
+<body>
+    <h3>Books borrowed by Student/s</h3>
+    <form action="#" method="post">
+        {% csrf_token %}
+        <table align="center" border="2">
+        
+            <thead>
+                <tr>
+                    <th>Book name</th>
+                    <th>Start Date</th>
+                    <th>Ending Date</th>
+                    <th>Return</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.bname }}</td>
+                    <td>{{ book.startDate }}</td>
+                    <td>{{ book.endDate }}</td>
+                    <td><a href="/stud_books/{{ book.id }}">Return</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table><br><br>
+        {% comment %} <input type="submit" id="assigner" name="assigner" 
+            value="Click here to assign more books"> {% endcomment %}
+    </form>
+</body>
+</html>
+{% endblock %}

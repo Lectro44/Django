@@ -1,0 +1,59 @@
+{% extends "admin_base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Assign Books</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block content %}
+        {% comment %} <link rel="stylesheet" href="{% static 'css/index.css' %}"> {% endcomment %}
+
+    </head>
+    <body>
+        <h2 style="text-align:center;">Assign Books here</h2>
+        <form action="/assign_books/" method="post">
+        {% csrf_token %}
+        <table align="center" width= 3>
+            <tr>
+                <td><label for = "sname">Student Name:</label>
+                <select id="sname" name="sname">
+                    {% for name in names %}
+                        <option value="{{ name.name }}">{{ name.name }}</option>
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for = "bname">Book name:</label>
+                <select id="bname" name="bname">
+                    {% for book in books %}
+                        <option value="{{ book.name }}">{{ book.name }}</option>
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for = "sdate">Start Date:</label>
+                    <input type="date" id="sdate" name="sdate">
+                </td><br>
+            </tr>
+            <tr>
+                <td><label for = "edate">End Date:</label>
+                    <input type="date" id="edate" name="edate">
+                </td><br>
+            </tr>
+
+            <tr>
+                <td><input type="submit" style="background-color: rgb(153, 0, 255); 
+                margin-top: 20px; border-radius: 8px; color: white; margin-left: 50px;" 
+                     class="stud" name="assign" value="Assign Book"></td>
+            </tr>
+        </table>
+    </form>
+        <script src="" async defer></script>
+    </body>
+</html>
+{% endblock %}

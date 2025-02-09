@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login page</title>
+    <style>
+        body{
+            background-color: orange;
+            color: black;
+        }
+        .log{
+            width: 120px;
+            padding: 10px;
+            /* margin-left:80px; */
+            margin-right: 20px;
+            align-items: center;
+            font-weight: bold;
+            margin: 10px;
+        }
+        h1{
+            color: rgb(58, 198, 33);
+            background-color: black;
+            padding: 5%;
+        }
+        p,a{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <center><h1>Welcome to Login page</h1></center>
+    <form action="log_action" method="post">
+        {% csrf_token %}
+        <table align="center">
+            <tr>
+                <td>Email:<input type="email" class="log" style="margin-left: 75px;"  name="logmail" required placeholder="Enter email"></td>
+            </tr><br>
+            <tr>
+                <td>Password:<input type="password" class="log" style="margin-left: 50px;"  name="logpass" required placeholder="Enter password"></td>
+            </tr><br>
+            <tr>
+                <td><input type="submit" style="margin-left: 50px; background-color: greenyellow; border-radius: 8px;" class="log" name="logBut" value="Login"></td>
+            </tr>
+        </table>
+    </form>
+    <b><p>Not Registered ? Click<a href="http://127.0.0.1:8000/register"> here</a> to go to Registration portal</p></b>
+</body>
+</html>

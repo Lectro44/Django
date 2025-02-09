@@ -1,0 +1,44 @@
+{% extends "student_base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block content %}
+    <title>Student Profile</title>
+    <link rel="stylesheet" href="{% static 'css/books.css' %}">
+</head>
+<body>
+        
+    <h3>Student Profile</h3>
+    <form action="/prof_template/{{ students.id }}" method="post">
+        {% csrf_token %}
+         <table align="center" border="2">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Student Phno</th>
+                    <th>Student Branch</th>
+                    <th>Student Semester</th>
+                    <th>Student Password</th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                <tr>
+                    <td>{{ students.name }}</td>
+                    <td>{{ students.phno }}</td>
+                    <td>{{ students.branch }}</td>
+                    <td>{{ students.semester }}</td>
+                    <td>{{ students.password }}</td>
+                </tr>
+            </tbody>
+        </table><br><br>
+        <input type="submit"  name="updater" 
+            value="Update"> 
+    </form>
+</body>
+</html>
+{% endblock %}

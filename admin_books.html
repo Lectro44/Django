@@ -1,0 +1,47 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block content %}
+    <title>Available user details</title>
+    <link rel="stylesheet" href="{% static 'css/books.css' %}">
+</head>
+<body>
+    <h3>Available books in library</h3>
+    <form action="http://127.0.0.1:8000/books" method="post">
+        {% csrf_token %}
+        <table align="center" border="2">
+        
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Book name</th>
+                    <th>Author name</th>
+                    <th>Branch</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.id }}</td>
+                    <td>{{ book.name }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.branch }}</td>
+                    <td><a href="/update_books/{{ book.id }}">Update</a></td>
+                    <td><a href="/delete_book/{{ book.id }}">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table><br><br>
+        <input type="submit" id="adder" name="adder" 
+            value="Click here to add more books">
+    </form>
+</body>
+</html>
+{% endblock %}

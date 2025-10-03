@@ -1,0 +1,157 @@
+<header class="app-header">
+  <h1>Admin Dashboard</h1>
+  <div class="subtitle">Manage users, snippets, and system statistics</div>
+  <div class="welcome-header" style="margin-top:12px;font-size:18px;font-weight:600;color:#fff;text-align:center;">
+    Welcome {{vm.adminName}}
+  </div>
+</header>
+
+<main class="admin-container">
+  <!-- Statistics Cards -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <h3>{{vm.stats.totalUsers}}</h3>
+          <p>Total Users</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-content">
+          <h3>{{vm.stats.totalSnippets}}</h3>
+          <p>Total Snippets</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔗</div>
+        <div class="stat-content">
+          <h3>{{vm.stats.totalShared}}</h3>
+          <p>Shared Snippets</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <h3>{{vm.stats.totalLines}}</h3>
+          <p>Total Lines</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="search-container">
+      <h2>Search Snippets</h2>
+      <div class="search-input-group">
+        <input 
+          type="text" 
+          ng-model="vm.searchQuery" 
+          placeholder="Search snippets by title..." 
+          class="search-input"
+          ng-keyup="$event.keyCode === 13 && vm.searchSnippets()"
+        />
+        <button ng-click="vm.searchSnippets()" class="search-btn">Search</button>
+        <button ng-click="vm.loadSnippets()" class="clear-btn">Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Users Section -->
+  <section class="users-section">
+    <div class="section-header">
+      <h2>Users Management</h2>
+      <button ng-click="vm.loadUsers()" class="refresh-btn">Refresh</button>
+    </div>
+    
+    <div class="users-grid" ng-if="vm.users.length">
+      <div class="user-card" ng-repeat="user in vm.users">
+        <div class="user-info">
+          <h3>{{user.name}}</h3>
+          <p>Created: {{user.createdAt | date:'MMM dd, yyyy'}}</p>
+          <p>Snippets: {{user.snippetCount || 0}}</p>
+        </div>
+        <div class="user-actions">
+          <button ng-click="vm.viewUserSnippets(user)" class="view-btn">View Snippets</button>
+          <button ng-click="vm.deleteUser(user)" class="delete-btn">Delete User</button>
+        </div>
+      </div>
+    </div>
+    
+    <div ng-if="!vm.users.length" class="empty-state">
+      <p>No users found</p>
+    </div>
+  </section>
+
+  <!-- Snippets Section -->
+  <section class="snippets-section">
+    <div class="section-header">
+      <h2>Snippets Management</h2>
+      <button ng-click="vm.loadSnippets()" class="refresh-btn">Refresh</button>
+    </div>
+    
+    <div class="snippets-list" ng-if="vm.snippets.length">
+      <div class="snippet-item" ng-repeat="snippet in vm.snippets">
+        <div class="snippet-header">
+          <h3>{{snippet.title}}</h3>
+          <span class="language-badge">{{snippet.language}}</span>
+          <span class="user-badge" ng-if="snippet.userName">Created By: {{snippet.userName}}</span>
+          <span class="shared-badge" ng-if="snippet.originalSnippetId">Shared</span>
+        </div>
+        <div class="snippet-preview">
+          <div class="code-block">
+            <div class="code-line-numbers">{{vm.generateLineNumbers(snippet.code)}}</div>
+            <div class="code-content">
+              <pre><code class="language-{{vm.prismAlias(snippet.language)}}" ng-bind-html="vm.highlight(snippet)"></code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="snippet-actions">
+          <button ng-click="vm.deleteSnippet(snippet)" class="delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+    
+    <div ng-if="!vm.snippets.length" class="empty-state">
+      <p>No snippets found</p>
+    </div>
+  </section>
+
+  <!-- User Snippets Modal -->
+  <div ng-if="vm.selectedUser" class="modal-overlay" ng-click="vm.selectedUser = null">
+    <div class="modal-content" ng-click="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{vm.selectedUser.name}}'s Snippets</h2>
+        <button ng-click="vm.selectedUser = null" class="close-btn">×</button>
+      </div>
+      <div class="modal-body">
+        <div ng-if="vm.loadingUserSnippets" class="empty-state"><p>Loading snippets...</p></div>
+        <div class="user-snippets-list" ng-if="vm.userSnippets.length">
+          <div class="snippet-item" ng-repeat="snippet in vm.userSnippets">
+            <div class="snippet-header">
+              <h3>{{snippet.title}}</h3>
+              <span class="language-badge">{{snippet.language}}</span>
+              <span class="shared-badge" ng-if="snippet.originalSnippetId">Shared</span>
+            </div>
+            <div class="snippet-preview">
+              <div class="code-block">
+                <div class="code-line-numbers">{{vm.generateLineNumbers(snippet.code)}}</div>
+                <div class="code-content">
+                  <pre><code class="language-{{vm.prismAlias(snippet.language)}}" ng-bind-html="vm.highlight(snippet)"></code></pre>
+                </div>
+              </div>
+            </div>
+            <div class="snippet-actions">
+              <button ng-click="vm.deleteSnippet(snippet)" class="delete-btn">Delete</button>
+            </div>
+          </div>
+        </div>
+        <div ng-if="!vm.loadingUserSnippets && !vm.userSnippets.length" class="empty-state">
+          <p>No snippets found for this user</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

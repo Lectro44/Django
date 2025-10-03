@@ -1,0 +1,25 @@
+<main class="container full-center">
+  <section class="composer">
+    <div class="form-header">
+      <h2>Join Snippet Share</h2>
+      <p>Create your account to start sharing code snippets</p>
+    </div>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" ng-model="vm.form.name" placeholder="Choose a username" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" ng-model="vm.form.password" placeholder="Create a secure password" />
+    </div>
+    <div class="actions center">
+      <button ng-click="vm.register()" ng-disabled="!vm.form.name || !vm.form.password">Create Account</button>
+      <a class="btn" href="#/login">Already have an account?</a>
+    </div>
+    <div class="form-footer">
+      <p>Already have an account? <a href="#/login" style="color: #58a6ff;">Sign in here</a></p>
+    </div>
+  </section>
+</main>
+
+

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" ng-app="SnippetApp">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Snippet Share</title>
+  <!-- favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💻%3C/text%3E%3C/svg%3E">
+
+  <!-- jQuery (required for Owl Carousel) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"
+          onerror="(function(){var s=document.createElement('script');s.src='https://unpkg.com/angular@1.8.3/angular.min.js';document.head.appendChild(s);}())"></script>
+
+  <!-- Prism.js core + common languages + theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-okaidia.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-clike.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-cpp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js"></script>
+  <!-- Owl Carousel -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"
+          onerror="(function(){var s=document.createElement('script');s.src='https://unpkg.com/angular-route@1.8.3/angular-route.min.js';document.head.appendChild(s);}())"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <nav class="navbar" ng-class="{'hidden': (location && location.hash && location.hash.indexOf('#/me/admin')===0)}">
+    <div class="brand">Snippet Share</div>
+    <div class="links" ng-if="!onAdminRoute">
+      <a href="#/welcome" id="homeLink">Home</a>
+      <a href="#/login" id="loginLink">Login</a>
+      <a href="#/register" id="registerLink">Register</a>
+      <a href="#/app" id="guestLink">Guest</a>
+      <a href="#/welcome" id="signOutLink" style="display:none" onclick="if(window.signOut){window.signOut();} return false;">Sign Out</a>
+    </div>
+    
+    <!-- Search functionality for logged-in users -->
+    <div class="navbar-search" ng-if="isLoggedIn && !onAdminRoute && location.hash !== '#/admin-login'" ng-controller="MainCtrl as searchVm">
+      <input 
+        type="text" 
+        ng-model="searchVm.searchQuery" 
+        placeholder="Search snippets..." 
+        ng-keyup="$event.keyCode === 13 && searchVm.searchSnippets()"
+      />
+      <button class="search-btn-nav" ng-click="searchVm.searchSnippets()">Search</button>
+    </div>
+    <div class="links" ng-if="onAdminRoute">
+      <a href="#/welcome" onclick="if(window.adminSignOut){window.adminSignOut();} return false;">Sign Out</a>
+    </div>
+  </nav>
+
+  <div ng-view></div>
+
+  <footer class="app-footer">
+    <span>&copy; 2025. Snippet Share. NHCE Project.</span>
+  </footer>
+</body>
+</html>
+
+

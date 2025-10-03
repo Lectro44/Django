@@ -1,0 +1,228 @@
+<header class="app-header">
+  <h1>Snippet Share</h1>
+  <div class="subtitle">Share, view, and highlight code instantly</div>
+  <div ng-if="vm.isLoggedIn" class="welcome-header" style="margin-top:12px;font-size:18px;font-weight:600;color:#fff;text-align:center;">
+    Welcome {{vm.userName}}
+  </div>
+</header>
+
+<main class="container full-center">  
+  <section class="composer">
+    <div class="field">
+      <label>Title</label>
+      <input type="text" ng-model="vm.form.title" placeholder="Enter unique title" />
+    </div>
+    <div class="field">
+  <label>Language</label>
+  <select ng-model="vm.form.language" ng-options="lang for lang in vm.languages" ng-disabled="vm.disableLanguageDropdown"></select>
+    </div>
+    <div class="field">
+      <label>Code</label>
+      <div class="editor-block">
+        <div class="editor-line-numbers">{{vm.generateLineNumbersEditor(vm.form.code)}}</div>
+        <div class="editor-content">
+          <textarea ng-model="vm.form.code" rows="10" placeholder="Paste your code here..." ng-change="vm.onEditorInput()"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button ng-click="vm.create()" ng-disabled="!vm.form.title || !vm.form.code" ng-if="!vm.editingSnippet">Create Snippet</button>
+      <button ng-click="vm.openShareMenu()" ng-disabled="!vm.form.title || !vm.form.code" ng-if="vm.isLoggedInNow() && !vm.editingSnippet">Share Snippet</button>
+      <button ng-click="vm.generateGuestShareCode()" ng-disabled="!vm.form.title || !vm.form.code" ng-if="!vm.isLoggedInNow() && !vm.editingSnippet">Share Snippet</button>
+      <button ng-click="vm.updateSnippet()" ng-disabled="!vm.form.title || !vm.form.code" ng-if="vm.editingSnippet">Update Snippet</button>
+      <button ng-click="vm.updateOriginal()" ng-disabled="!vm.form.title || !vm.form.code" ng-if="vm.editingSnippet && vm.editingSnippet.sharedCanEdit">Update Original</button>
+      <button ng-click="vm.cancelEdit()" ng-if="vm.editingSnippet">Cancel Edit</button>
+    </div>
+
+    <div class="field" ng-if="!vm.isLoggedInNow() && vm.lastGuestShareCode">
+      <label>Share code (click to copy)</label>
+      <input type="text" readonly ng-click="vm.copyText(vm.lastGuestShareCode)" ng-value="vm.lastGuestShareCode" />
+    </div>
+
+    <div class="field" ng-if="vm.showShareMenu">
+      <label>Share with users</label>
+      <select multiple ng-model="vm.share.selected" ng-options="u for u in vm.share.users" class="user-select"></select>
+      <div class="permissions-section">
+        <label class="permissions-label">Permissions:</label>
+        <div class="permissions-options">
+          <label class="permission-option">
+            <input type="radio" name="permMode" ng-model="vm.share.permissions.read" ng-value="true" ng-change="vm.share.permissions.write=false" />
+            <span class="permission-text">Read Only</span>
+          </label>
+          <label class="permission-option">
+            <input type="radio" name="permMode" ng-model="vm.share.permissions.write" ng-value="true" ng-change="vm.share.permissions.read=false" />
+            <span class="permission-text">Read & Write</span>
+          </label>
+        </div>
+      </div>
+      <div class="actions">
+        <button ng-click="vm.performShare()" ng-disabled="!vm.share.selected.length">Share</button>
+        <button class="delete" ng-click="vm.cancelShare()">Cancel</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Results Section -->
+  <section class="list" ng-if="vm.isSearching && vm.searchResults.length">
+    <h2>Search Results</h2>
+    <div class="search-info">
+      <p>Found {{vm.searchResults.length}} snippet(s) matching "{{vm.searchQuery}}"</p>
+      <button ng-click="vm.clearSearch()" class="edit">Clear Search</button>
+    </div>
+    <div class="snippet" ng-class="{collapsed: s._collapsed}" ng-init="s._collapsed=true" ng-repeat="s in vm.searchResults | orderBy:'-createdAt' track by s.id">
+      <div class="snippet-header">
+        <h3>{{s.title}}</h3>
+        <span class="lang">{{s.language}}</span>
+        <div class="snippet-meta">
+          <span class="user-badge" ng-if="s.userName">Created By: {{s.userName}}</span>
+          <span class="shared-badge" ng-if="s.originalSnippetId">Shared</span>
+          <span class="shared-by" ng-if="s.sharedBy">
+            <i class="meta-icon">👤</i>Shared by: {{s.sharedBy}}
+          </span>
+          <span class="shared-by" ng-if="s.lastEditedByName">
+            <i class="meta-icon">✏️</i>Last edited by: {{s.lastEditedByName}}
+          </span>
+          <span class="permission-badge" ng-if="s.sharedCanEdit">
+            <i class="meta-icon">✏️</i>Can Edit
+          </span>
+          <span class="permission-badge read-only" ng-if="!s.sharedCanEdit && s.originalSnippetId">
+            <i class="meta-icon">👁️</i>Read Only
+          </span>
+        </div>
+        <div class="snippet-controls">
+          <button class="edit" ng-click="vm.editSnippet(s)" ng-if="s.sharedCanEdit">Edit Snippet</button>
+          <button class="delete" ng-click="vm.remove(s.id)">Delete</button>
+          <button class="edit" ng-click="vm.openShareFor(s)" ng-if="vm.isLoggedIn">Share</button>
+          <button class="edit" ng-click="vm.generateCode(s)" ng-if="!vm.isLoggedIn">Share Snippet</button>
+          <button class="edit" ng-click="vm.copyCode(s)">Copy</button>
+          <button class="edit" ng-click="vm.downloadCode(s)">Download</button>
+          <button class="edit" ng-click="vm.updateOriginal(s)" ng-if="s.sharedCanEdit && s.originalSnippetId">Update Original</button>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-line-numbers">{{vm.generateLineNumbers(s.code)}}</div>
+        <div class="code-content">
+          <pre><code class="language-{{vm.prismAlias(s.language)}}" ng-bind-html="vm.highlight(s)"></code></pre>
+        </div>
+      </div>
+      <div class="snippet-actions" ng-if="s._collapsed && vm.shouldShowExpand(s)">
+        <button class="edit" ng-click="s._collapsed=false">Expand</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="list" ng-if="!vm.isLoggedIn && vm.snippetsAll.length && !vm.isSearching">
+    <h2>Added Snippets</h2>
+    <div class="snippet" ng-class="{collapsed: s._collapsed}" ng-init="s._collapsed=true" ng-repeat="s in vm.snippetsAll | orderBy:'-createdAt' track by s.id">
+      <div class="snippet-header">
+        <h3>{{s.title}}</h3>
+        <span class="lang">{{s.language}}</span>
+        
+        <button class="edit" ng-click="vm.editSnippet(s)" ng-if="s.sharedCanEdit">Edit Snippet</button>
+        <button class="delete" ng-click="vm.remove(s.id)">Delete</button>
+        <button class="edit" ng-click="vm.openShareFor(s)" ng-if="vm.isLoggedIn">Share</button>
+        <button class="edit" ng-click="vm.generateCode(s)" ng-if="!vm.isLoggedIn">Share Snippet</button>
+        <button class="edit" ng-click="vm.copyCode(s)">Copy</button>
+        <button class="edit" ng-click="vm.downloadCode(s)">Download</button>
+      </div>
+      <div class="code-block">
+        <div class="code-line-numbers">{{vm.generateLineNumbers(s.code)}}</div>
+        <div class="code-content">
+          <pre><code class="language-{{vm.prismAlias(s.language)}}" ng-bind-html="vm.highlight(s)"></code></pre>
+        </div>
+      </div>
+      <div class="snippet-actions" ng-if="s._collapsed && vm.shouldShowExpand(s)">
+        <button class="edit" ng-click="s._collapsed=false">Expand</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="list" ng-if="!vm.isLoggedIn && !vm.isSearching">
+    <h2>Guest Snippets</h2>
+    <div class="snippet" ng-class="{collapsed: s._collapsed}" ng-init="s._collapsed=true" ng-repeat="s in vm.snippetsGuest | orderBy:'-createdAt' track by s.id">
+      <div class="snippet-header">
+        <h3>{{s.title}}</h3>
+        <span class="lang">{{s.language}}</span>
+        <button class="delete" ng-click="vm.remove(s.id)">Delete</button>
+        <button class="edit" ng-click="vm.editSnippet(s)">Edit Snippet</button>
+      </div>
+      <div class="code-block">
+        <div class="code-line-numbers">{{vm.generateLineNumbers(s.code)}}</div>
+        <div class="code-content">
+          <pre><code class="language-{{vm.prismAlias(s.language)}}" ng-bind-html="vm.highlight(s)"></code></pre>
+        </div>
+      </div>
+      <div class="snippet-actions" ng-if="s._collapsed && vm.shouldShowExpand(s)">
+        <button class="edit" ng-click="s._collapsed=false">Expand</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="list" ng-if="vm.snippetsUser.length && !vm.isSearching">
+    <h2>Your Snippets</h2>
+    <div class="snippet" ng-class="{collapsed: s._collapsed}" ng-init="s._collapsed=true" ng-repeat="s in vm.snippetsUser | orderBy:'-createdAt' track by s.id">
+      <div class="snippet-header">
+        <h3>{{s.title}}</h3>
+        <span class="lang">{{s.language}}</span>
+        <button class="delete" ng-click="vm.remove(s.id)">Delete</button>
+        <button class="edit" ng-click="vm.editSnippet(s)">Edit Snippet</button>
+        <button class="edit" ng-click="vm.openShareFor(s)">Share</button>
+        <button class="edit" ng-click="vm.copyCode(s)">Copy</button>
+        <button class="edit" ng-click="vm.downloadCode(s)">Download</button>
+      </div>
+      <div class="code-block">
+        <div class="code-line-numbers">{{vm.generateLineNumbers(s.code)}}</div>
+        <div class="code-content">
+          <pre><code class="language-{{vm.prismAlias(s.language)}}" ng-bind-html="vm.highlight(s)"></code></pre>
+        </div>
+      </div>
+      <div class="snippet-actions" ng-if="s._collapsed && vm.shouldShowExpand(s)">
+        <button class="edit" ng-click="s._collapsed=false">Expand</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="list" ng-if="vm.snippetsShared.length && !vm.isSearching">
+    <h2>Shared Snippets</h2>
+    <div class="snippet" ng-class="{collapsed: s._collapsed}" ng-init="s._collapsed=true" ng-repeat="s in vm.snippetsShared | orderBy:'-createdAt' track by s.id">
+      <div class="snippet-header">
+        <h3>{{s.title}}</h3>
+        <span class="lang">{{s.language}}</span>
+        <div class="snippet-meta">
+          <span class="shared-by" ng-if="s.sharedBy">
+            <i class="meta-icon">👤</i>Shared by: {{s.sharedBy}}
+          </span>
+          <span class="shared-by" ng-if="s.lastEditedByName">
+            <i class="meta-icon">✏️</i>Last edited by: {{s.lastEditedByName}}
+          </span>
+          <span class="permission-badge" ng-if="s.sharedCanEdit">
+            <i class="meta-icon">✏️</i>Can Edit
+          </span>
+          <span class="permission-badge read-only" ng-if="!s.sharedCanEdit">
+            <i class="meta-icon">👁️</i>Read Only
+          </span>
+        </div>
+        <div class="snippet-controls">
+          <button class="edit" ng-click="vm.editSnippet(s)" ng-if="s.sharedCanEdit">Edit Snippet</button>
+          <button class="edit" ng-click="vm.openShareFor(s)">Share</button>
+          <button class="edit" ng-click="vm.copyCode(s)">Copy</button>
+          <button class="edit" ng-click="vm.downloadCode(s)">Download</button>
+          <button class="edit" ng-click="vm.updateOriginal()" ng-if="s.sharedCanEdit && s.originalSnippetId">Update Original</button>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-line-numbers">{{vm.generateLineNumbers(s.code)}}</div>
+        <div class="code-content">
+          <pre><code class="language-{{vm.prismAlias(s.language)}}" ng-bind-html="vm.highlight(s)"></code></pre>
+        </div>
+      </div>
+      <div class="snippet-actions" ng-if="s._collapsed && vm.shouldShowExpand(s)">
+        <button class="edit" ng-click="s._collapsed=false">Expand</button>
+      </div>
+    </div>
+  </section>
+
+  
+</main>
+
+

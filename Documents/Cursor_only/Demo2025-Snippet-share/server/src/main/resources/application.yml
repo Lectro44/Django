@@ -6,16 +6,16 @@ spring:
     name: snippet-share
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/snippetDb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: postgres
-    password: 1011
+    url: jdbc:postgresql://bodlm3hfciqkwwv0p2mu-postgresql.services.clever-cloud.com:50013/bodlm3hfciqkwwv0p2mu?sslmode=require
+    username: uun3lepjlceknyok7jv7
+    password: uZC6ccyqplzYNgQ7RV1z8ISLNI0J0m
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      idle-timeout: 300000
-      max-lifetime: 1200000
-      connection-timeout: 20000
+      maximum-pool-size: 3
+      minimum-idle: 1
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
       leak-detection-threshold: 60000
   
   jpa:

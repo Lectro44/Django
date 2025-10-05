@@ -88,21 +88,21 @@
                 </executions>
             </plugin>
             <plugin>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-maven-plugin</artifactId>
-            <version>10.8.1</version>
-            <configuration>
-                <url>jdbc:postgresql://localhost:5432/snippetDb</url>
-                <user>postgres</user>
-                <password>1011</password>
-                <schemas>
-                    <schema>public</schema>
-                </schemas>
-                <locations>
-                    <location>filesystem:src/main/resources/db/migration</location>
-                </locations>
-            </configuration>
-        </plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>10.8.1</version>
+                <configuration>
+                    <url>jdbc:postgresql://bodlm3hfciqkwwv0p2mu-postgresql.services.clever-cloud.com:50013/bodlm3hfciqkwwv0p2mu</url>
+                    <user>uun3lepjlceknyok7jv7</user>
+                    <password>uZC6ccyqplzYNgQ7RV1z8ISLNI0J0m</password>
+                    <schemas>
+                        <schema>public</schema>
+                    </schemas>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
